@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library of Ruina Battle Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="game-container">
+    <!-- 화면 충격/타격 이펙트 오버레이 -->
+    <div id="fx-overlay" class="fx-overlay"></div>
+
+    <!-- 헤더 영역 -->
+    <header>
+        <div class="scene-title">Library of Ruina</div>
+        <div id="scene-counter">Scene 1</div>
+        <div class="header-buttons">
+            <button id="btn-tut" class="btn-tut" type="button">📖 튜토리얼</button>
+            <button id="btn-clash" class="btn-clash" type="button">⚔️ 합 진행 (Space)</button>
+        </div>
+    </header>
+
+    <!-- 튜토리얼 팝업 (닫기 가능 모달) -->
+    <div id="tutorial-panel" class="modal overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📖 전투 가이드</h3>
+                <button id="btn-close-tut-x" class="btn-close-x" type="button">✕</button>
+            </div>
+            <ul>
+                <li><b>스페이스바(Space):</b> [합 진행] 버튼 대신 키보드로 빠르게 전투를 시작할 수 있습니다.</li>
+                <li><b>카드 미선택:</b> 카드를 내지 않고 합을 진행하면 '기본 공격(1~6)'으로 자동 전투합니다.</li>
+                <li><b>시작 손패:</b> 시작 시 카드 4장을 가지고 시작하며, 매 막 1장씩 드로우합니다.</li>
+                <li><b>합 이펙트:</b> 합 진행 시 타격 및 화면 흔들림 효과가 적용됩니다.</li>
+            </ul>
+            <button id="btn-close-tut" class="btn-close" type="button">확인 / 게임 시작</button>
+        </div>
+    </div>
+
+    <!-- 전장 유닛 카드 -->
+    <div class="battlefield">
+        <!-- 플레이어 -->
+        <div class="char-card player-team" id="player-card-ui">
+            <div class="char-header-info">
+                <span class="char-name">롤랑 <span id="p-stagger-status" class="stagger-badge hidden">흐트러짐!</span></span>
+                <span class="team-badge">아군</span>
+            </div>
+            <div>
+                <div class="stat-label">HP: <span id="p-hp-text">100/100</span></div>
+                <div class="bar-container"><div id="p-hp-bar" class="hp-fill"></div></div>
+            </div>
+            <div>
+                <div class="stat-label">흐트러짐: <span id="p-stagger-text">70/70</span></div>
+                <div class="bar-container"><div id="p-stagger-bar" class="stagger-fill"></div></div>
+            </div>
+            <div>
+                <div class="stat-label">빛 (Light)</div>
+                <div id="p-light-bulbs" class="light-container"></div>
+            </div>
+            <div>
+                <div class="stat-label">감정 Lv.<span id="p-emo-lv">0</span> (코인: <span id="p-emo-coins">0/3</span>)</div>
+                <div class="bar-container"><div id="p-emo-bar" class="emotion-fill"></div></div>
+            </div>
+            <div class="status-effect-list">
+                <div class="stat-label">부여된 상태이상: <span id="p-status-effects" class="status-tag">없음</span></div>
+            </div>
+            <div class="abno-active-list">
+                <div class="stat-label">장착된 환상체 책장: <span id="p-abno-list" class="tag-container">없음</span></div>
+            </div>
+        </div>
+
+        <!-- 적 -->
+        <div class="char-card enemy-team" id="enemy-card-ui">
+            <div class="char-header-info">
+                <span class="char-name">핏빛밤 <span id="e-stagger-status" class="stagger-badge hidden">흐트러짐!</span></span>
+                <span class="team-badge enemy">적군</span>
+            </div>
+            <div>
+                <div class="stat-label">HP: <span id="e-hp-text">100/100</span></div>
+                <div class="bar-container"><div id="e-hp-bar" class="hp-fill"></div></div>
+            </div>
+            <div>
+                <div class="stat-label">흐트러짐: <span id="e-stagger-text">70/70</span></div>
+                <div class="bar-container"><div id="e-stagger-bar" class="stagger-fill"></div></div>
+            </div>
+            <div>
+                <div class="stat-label">빛 (Light)</div>
+                <div id="e-light-bulbs" class="light-container"></div>
+            </div>
+            <div>
+                <div class="stat-label">감정 Lv.<span id="e-emo-lv">0</span> (코인: <span id="e-emo-coins">0/3</span>)</div>
+                <div class="bar-container"><div id="e-emo-bar" class="emotion-fill"></div></div>
+            </div>
+            <div class="status-effect-list">
+                <div class="stat-label">부여된 상태이상: <span id="e-status-effects" class="status-tag">없음</span></div>
+            </div>
+            <div class="abno-active-list">
+                <div class="stat-label">장착된 환상체 책장: <span id="e-abno-list" class="tag-container">없음</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 전투 로그 -->
+    <div id="combat-log">
+        <div class="log-turn">=== 전투 시작: 카드를 선택하거나 [Space]를 눌러 합을 진행하세요 ===</div>
+    </div>
+
+    <!-- 손패 카드 영역 -->
+    <div class="card-area">
+        <div class="deck-info">
+            <span class="area-title">일반 전투 책장 (손패)</span>
+            <span class="deck-count">남은 덱: <b id="deck-count-num">0</b>장 | 버린 더미: <b id="grave-count-num">0</b>장</span>
+        </div>
+        <div class="hand-container" id="player-hand"></div>
+        
+        <div class="area-title ego-title">E.G.O 책장 (감정 Lv.3 해금)</div>
+        <div class="hand-container" id="ego-hand"></div>
+    </div>
+</div>
+
+<!-- 환상체 책장 선택 팝업 -->
+<div id="abno-select-modal" class="modal overlay hidden">
+    <div class="modal-content">
+        <h2>✨ 환상체 책장 선택</h2>
+        <p style="margin: 10px 0; color: #aaa; font-size: 13px;">감정 단계가 상승했습니다! 적용할 환상체의 힘을 선택하세요.</p>
+        <div id="abno-card-choices" class="abno-choices-container"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

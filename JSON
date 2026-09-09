@@ -1,0 +1,30 @@
+{
+  "gameState": {
+    "turn": 1,
+    "gameSpeed": 1,
+    "isProcessing": false,
+    "selectedCard": null
+  },
+  "player": {
+    "hp": 100,
+    "maxHp": 100,
+    "stagger": 50,
+    "maxStagger": 50,
+    "light": 3,
+    "maxLight": 3,
+    "speed": 0,
+    "hand": [
+      { "id": 1, "name": "느릿한 타격", "cost": 1, "dice": { "type": "공격", "min": 3, "max": 7 } },
+      { "id": 2, "name": "응수", "cost": 1, "dice": { "type": "방어", "min": 4, "max": 8 } },
+      { "id": 3, "name": "강타", "cost": 2, "dice": { "type": "공격", "min": 6, "max": 11 } }
+    ]
+  },
+  "enemy": {
+    "hp": 80,
+    "maxHp": 80,
+    "stagger": 40,
+    "maxStagger": 40,
+    "speed": 0,
+    "nextCard": { "name": "톱날 베기", "dice": { "type": "공격", "min": 3, "max": 7 } }
+  }
+}
